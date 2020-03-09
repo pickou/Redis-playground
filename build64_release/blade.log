@@ -1,0 +1,17 @@
+Blade(debug): Failed to generate scm: svn: E155007: '/data/Project/playground/Redis-playground' is not a working copy
+
+Blade(debug): ccache found
+Blade(debug): distcc found
+Blade(info): loading BUILDs...
+Blade(info): loading done.
+Blade(info): analyzing dependency graph...
+Blade(info): analyzing done.
+Blade(info): generating build rules...
+Blade(debug): CPP=cpp
+Blade(debug): CC=gcc
+Blade(debug): CXX=g++
+Blade(debug): LD=g++
+Blade(warning): Unsupported C/C++ flags: -Werror=format-nonliteral
+Blade(info): generating done.
+Blade(info): cleaning...(hint: please specify --generate-dynamic to clean your so)
+Blade(info): cleaning done.
