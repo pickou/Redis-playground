@@ -1,0 +1,21 @@
+cc_config(
+    extra_incs=[],
+    # cppflags = '-DHAVE_CONFIG_H'
+    cxxflags = [
+        '-std=c++11'
+    ],
+    cflags = [
+        '-std=gnu11'
+    ],
+    cpplint = 'common/tools/cpplint.py',
+)
+
+cc_test_config(
+    heap_check = 'strict',
+    gperftools_libs = 'thirdparty/perftools::tcmalloc',
+    gperftools_debug_libs = 'thirdparty/perftools::tcmalloc_debug',
+    gtest_libs = 'thirdparty/gtest::gtest',
+    gtest_main_libs = 'thirdparty/gtest::gtest_main',
+    pprof_path = 'thirdparty/perftools/bin/pprof',
+)
+
