@@ -3,6 +3,20 @@
 #include <string.h>
 #include "redis/src/zmalloc.h"
 
+#define PREFIX_SIZE sizeof(size_t)
+
+#define increment_used_memory(_n) do { \
+    used_memory += _n; \
+} while(0)
+
+#define decrement_used_memory(_n) do { \
+    used_memory -= _n; \
+} while(0)
+
+
+static size_t used_memory = 0;
+
+
 // stderr oom
 void zmalloc_oom(size_t size) {
     fprintf(stderr, "zmalloc: Out of memeory trying to allocate %zu bytes.\n",
@@ -12,13 +26,15 @@ void zmalloc_oom(size_t size) {
 }
 
 char *zmalloc(size_t size) {
-    void *ptr = malloc(size);
+    void *ptr = malloc(size + PREFIX_SIZE);
     // out of memory
     if(!ptr) zmalloc_oom(size);
 
     *((size_t *) ptr) = size;
 
-    return (char *)ptr;
+    increment_used_memory(size + PREFIX_SIZE);
+
+    return (char *)ptr + PREFIX_SIZE;
 }
 
 
@@ -26,18 +42,27 @@ char *zremalloc(void *ptr, size_t size) {
     if(!ptr) return zmalloc(size);
 
     void *newptr;
-
-    newptr = realloc(ptr, size);
+    void *realptr = (char *)ptr - PREFIX_SIZE;
     
+    size_t oldsize = *((size_t *)realptr);
+
+    newptr = realloc(realptr, size + PREFIX_SIZE);
     if(!newptr) zmalloc_oom(size);
     
     *((size_t *) newptr) = size;
 
-    return (char *)newptr;
+    decrement_used_memory(oldsize);
+    increment_used_memory(size);
+    
+    free(realptr);
+    return (char *)newptr + PREFIX_SIZE;
 
 }
 
 void zfree(void *ptr) {
     if(!ptr) return;
-    free(ptr);
+    void * realptr = (char *)ptr - PREFIX_SIZE;
+    size_t oldsize = *((size_t *)realptr);
+    decrement_used_memory(oldsize + PREFIX_SIZE);
+    free(realptr);
 }

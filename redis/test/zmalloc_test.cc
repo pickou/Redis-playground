@@ -26,12 +26,12 @@ TEST_F(ZmallocTest, Malloc) {
 
 TEST_F(ZmallocTest, Realloc) {
     // char p[] = "strafasf";
-    int *p = (int *)malloc(8);
+    char *p = zmalloc(4);
     char *q = zremalloc((void *)p, 10);
     EXPECT_NE(q, nullptr);
 //    EXPECT_EQ(zremalloc(nullptr, 2), nullptr);
 //    EXPECT_EQ(zremalloc(nullptr, -2), nullptr);
 //    EXPECT_EQ(zremalloc(nullptr, 0), nullptr);
-    free(p);
+    zfree(p);
     zfree(q);
 }
