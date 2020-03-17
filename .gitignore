@@ -5,3 +5,4 @@
 ./blade-bin/*
 .Building.lock
 .sconsign.dblite
+.blade.test.stamp

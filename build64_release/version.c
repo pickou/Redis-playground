@@ -8,14 +8,14 @@ extern const char kBuilderName[];
 extern const char kHostName[];
 extern const char kCompiler[];
 const int kSvnInfoCount = 1;
-const char* const kSvnInfo[1] = {"commit 2ba60b70c8cd4e1bad8bfce90c4b9995319ebf18\n"
+const char* const kSvnInfo[1] = {"commit 1b892deb618f6200fb1fca049f8c01cda1b13960\n"
 "Author: junchaoyan <junchaoyan@tencent.com>\n"
-"Date:   Thu Jan 9 20:34:53 2020 +0800\n"
+"Date:   Mon Mar 9 21:55:13 2020 +0800\n"
 "\n"
-"    add zmalloc not consider thread safe\n"
+"    update gitignore\n"
 ""};
 const char kBuildType[] = "release";
-const char kBuildTime[] = "Mon Mar  9 21:41:11 2020";
+const char kBuildTime[] = "Tue Mar 17 11:03:20 2020";
 const char kBuilderName[] = "junchaoyan";
 const char kHostName[] = "VM_147_101_centos";
 const char kCompiler[] = "GCC 4.8.5";
