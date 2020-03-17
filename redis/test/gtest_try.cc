@@ -18,6 +18,6 @@ class TryTest: public ::testing::Test {
 
 TEST_F(TryTest, MedthodAxB) {
     EXPECT_EQ(plus(2, 3), 6);
-    EXPECT_EQ(plus(1, 5), 10);
+    EXPECT_EQ(plus(2, 5), 10);
 }
 

@@ -8,14 +8,14 @@ extern const char kBuilderName[];
 extern const char kHostName[];
 extern const char kCompiler[];
 const int kSvnInfoCount = 1;
-const char* const kSvnInfo[1] = {"commit 1b892deb618f6200fb1fca049f8c01cda1b13960\n"
+const char* const kSvnInfo[1] = {"commit 67cd552d819d510575390e67e0c87bc10bcc17ac\n"
 "Author: junchaoyan <junchaoyan@tencent.com>\n"
-"Date:   Mon Mar 9 21:55:13 2020 +0800\n"
+"Date:   Tue Mar 17 11:20:15 2020 +0800\n"
 "\n"
-"    update gitignore\n"
+"    delete blade bin\n"
 ""};
 const char kBuildType[] = "release";
-const char kBuildTime[] = "Tue Mar 17 11:03:20 2020";
+const char kBuildTime[] = "Tue Mar 17 15:40:45 2020";
 const char kBuilderName[] = "junchaoyan";
 const char kHostName[] = "VM_147_101_centos";
 const char kCompiler[] = "GCC 4.8.5";

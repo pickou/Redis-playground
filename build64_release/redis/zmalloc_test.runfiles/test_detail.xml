@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0" name="AllTests">
+  <testsuite name="ZmallocTest" tests="2" failures="0" disabled="0" errors="0" time="0">
+    <testcase name="Malloc" status="run" time="0" classname="ZmallocTest" />
+    <testcase name="Realloc" status="run" time="0" classname="ZmallocTest" />
+  </testsuite>
+</testsuites>
