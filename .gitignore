@@ -1,8 +1,8 @@
 # gitignore
 
 # Blade
-./build64_release/
-./blade-bin/
+build64_release/
+blade-bin
 .Building.lock
 .sconsign.dblite
 .blade.test.stamp
