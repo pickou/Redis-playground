@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="1" failures="0" disabled="0" errors="0" time="0" name="AllTests">
-  <testsuite name="TryTest" tests="1" failures="0" disabled="0" errors="0" time="0">
-    <testcase name="MedthodAxB" status="run" time="0" classname="TryTest" />
-  </testsuite>
-</testsuites>
