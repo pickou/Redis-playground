@@ -24,7 +24,7 @@ cc_binary(
 for source in os.listdir(os.path.join(this_dir, 'redis', 'test')):
     if(source.endswith('.cc')):
         cc_test(
-            name = source[:-3],
+            name = source[:-8], # sds_test.cc ==> sds
             srcs = 'test/{0}'.format(source),
             deps = [
                 ':libredis',
