@@ -40,7 +40,9 @@ sds sdsempty(void) {
 
 void sdsfree(sds s) {
     if(!s) return;
-    zfree(s-sizeof(struct sdshdr));
+    void *p = (void *)(s - sizeof(struct sdshdr));
+    // safe_zfree(&p);
+    zfree(p);
 }
 
 int sdslen(sds s) {
@@ -84,7 +86,7 @@ sds sdscatlen(sds s, void *t, size_t len) {
     if(s == NULL) return NULL;
 
     sh = (struct sdshdr *)(s - sizeof(struct sdshdr));
-    memcpy(sh + curlen, t, len);
+    memcpy(s + curlen, t, len);
     sh->len = curlen + len;
     sh->free -= len;
     s[sh->len] = '\0';
@@ -102,6 +104,8 @@ sds sdscpylen(sds s, char *t, size_t len) {
     if(totlen < len) {
         s = sdsMakeRoomFor(s, len - sh->len);
         if(!s) sdsOomAbort();
+        // the addr of s has changed.
+        sh = (struct sdshdr *)(s - sizeof(struct sdshdr));
         totlen = sh->free + sh->len;
     }
 
@@ -118,12 +122,12 @@ sds sdscpy(sds s, char *t) {
 
 int sdscmp(sds s1, sds s2) {
     size_t len1, len2, minlen;
-    
     len1 = sdslen(s1);
     len2 = sdslen(s2);
 
     minlen = (len1 >= len2) ? len2:len1;
     int cmp = memcmp(s1, s2, minlen);
+    
     if(cmp == 0) return len1 - len2;
     return cmp;
 }
