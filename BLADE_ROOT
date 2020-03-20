@@ -76,6 +76,7 @@ cc_config(
     ],
     cxxflags = [
         '-std=c++11',
+        '-fpermissive',
         # '-static-libasan',
     ],
     cpplint = 'common/tools/cpplint.py',
