@@ -7,7 +7,7 @@ listNode *listFirst(list *list) {
     return list->head;
 }
 
-listNode *listLast(list *list) {
+listNode *listTail(list *list) {
     return list->tail;
 }
 
@@ -73,10 +73,15 @@ void safe_listRelease(list **list) {
 }
 
 list *listAddNodeHead(list *list, void *value) {
-    listNode *node = (listNode *)zmalloc(sizeof(listNode*));
+    listNode *node = (listNode *)zmalloc(sizeof(listNode));
     node->prev = NULL;
     node->next = list->head;
-    (list->head)->prev = node;
+    if(list->head) {
+        (list->head)->prev = node;
+    } else {
+        // head is tail
+        list->tail = node;
+    }
     node->value = value;
     list->head = node;
     list->len += 1;
@@ -84,16 +89,32 @@ list *listAddNodeHead(list *list, void *value) {
 }
 
 list *listAddNodeTail(list *list, void *value) {
-    listNode *node = (listNode *)zmalloc(sizeof(listNode*));
-    node->prev = list->tail;
+    listNode *node = (listNode *)zmalloc(sizeof(listNode));
     node->next = NULL;
-    (list->head)->next = node;
+    node->prev = list->tail;
+    if(list->tail) {
+        (list->head)->next = node;
+    } else {
+        // hrad is tail
+        list->head = node;
+    }
+    list->tail = node;
     node->value = value;
     list->len += 1;
     return list;
 }
 
 void listDelNode(list *list, listNode *node) {
+    if(listLength(list) == 0) return;
+    if(listLength(list) == 1) {
+        if(list->head == node) {
+            list->head = list->tail = NULL;
+            if(list->free) list->free(node->value);
+            zfree(node);
+            list->len--;
+            return;
+        }
+    }
     if(node == list->head) {
         list->head = node->next;
         (node->next)->prev = NULL;
@@ -105,8 +126,8 @@ void listDelNode(list *list, listNode *node) {
         (node->next)->prev = node->prev;
     }
     if(list->free) list->free(node->value);
-    zfree(node);
     list->len--;
+    zfree(node);
 }
 
 listNode *listSearchKey(list *list, void *key) {
@@ -137,6 +158,7 @@ listNode *listIndex(list *list, int index) {
     while(node) {
         if(i == index) return node;
         node = node->next;
+        ++i;
     }
     return NULL;
 }
