@@ -93,9 +93,9 @@ list *listAddNodeTail(list *list, void *value) {
     node->next = NULL;
     node->prev = list->tail;
     if(list->tail) {
-        (list->head)->next = node;
+        (list->tail)->next = node;
     } else {
-        // hrad is tail
+        // head is tail
         list->head = node;
     }
     list->tail = node;
@@ -170,9 +170,10 @@ list *listDup(list *orig) {
     copy->match = orig->match;
 
     struct listIter *iter = listGetIterator(orig, FORWARD);
-    while(iter->next) {
+    
+    while(iter->next!=NULL) {
         listNode *node = listNext(iter);
-        void *value;
+        void *value = NULL;
         if(copy->dup) {
             value = copy->dup(node->value);
             if(value == NULL) {
@@ -183,18 +184,22 @@ list *listDup(list *orig) {
         } else {
             value = node->value;
         }
+        if(value == NULL) {
+            printf("value is NULL.\n");
+        }
         if((copy = listAddNodeTail(copy, value)) == NULL) {
             listReleaseIter(iter);
             listRelease(copy);
             return NULL;
         }
-
     }
+    listReleaseIter(iter);
+
     return copy;
 }
 
 listIter *listGetIterator(list *list, int direction) {
-   listIter *iter = (struct listIter*)zmalloc(sizeof(listIter*));
+   listIter *iter = (struct listIter*)zmalloc(sizeof(listIter));
    iter->direction = direction;
    if(direction == FORWARD) {
        iter->next = list->head;

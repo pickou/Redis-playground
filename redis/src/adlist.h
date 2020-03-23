@@ -50,6 +50,7 @@ list *listAddNodeTail(list *list, void *value);
 void listDelNode(list *list, listNode *node);
 listNode *listSearchKey(list *list, void *key);
 listNode *listIndex(list *list, int index);
+list *listDup(list *orig);
 
 // Iterator
 listIter *listGetIterator(list *list, int direction);

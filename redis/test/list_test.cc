@@ -35,6 +35,10 @@ TEST_F(ListTest, ListAddNodeHeadTail) {
     list = listAddNodeTail(list, &a);
     EXPECT_EQ(2, listLength(list));
     EXPECT_FALSE(listTail(list) == NULL);
+
+    int *b = NULL;
+    list = listAddNodeHead(list, b);
+    EXPECT_EQ(3, listLength(list));
     safe_listRelease(&list);
 }
 
@@ -91,8 +95,40 @@ TEST_F(ListTest, ListIndex) {
     safe_listRelease(&list);
 }
 
-TEST_F(ListTest, ListDup) {
+TEST_F(ListTest, ListIterGetRelease) {
+    list *list = listCreate();
+    int a = 10;
+    list = listAddNodeHead(list, &a);
+    int b = 20;
+    list = listAddNodeHead(list, &b);
+    listIter *iter = listGetIterator(list, FORWARD);
+    while(iter->next) {
+        listNode *node = listNext(iter);
+        EXPECT_FALSE(node == NULL);
+    }
+    listReleaseIter(iter);
+    listRelease(list);
+    
+}
 
+TEST_F(ListTest, ListDup) {
+    list *list = listCreate();
+    int a = 10;
+    list = listAddNodeHead(list, &a);
+    int b = 20;
+    list = listAddNodeHead(list, &b);
+    int c = 30;
+    list = listAddNodeHead(list, &c);
+    struct list *copy = listDup(list);
+    /*
+    listNode *headc = listFirst(copy);
+    listNode *head = listFirst(list);
+    ASSERT_FALSE(headc == head);
+    ASSERT_EQ(3, listLength(copy));
+    EXPECT_EQ(c, *((int *)listNodeValue(headc)));
+    */
+    safe_listRelease(&copy);
+    safe_listRelease(&list);
 }
 
 TEST_F(ListTest, ListFree) {
