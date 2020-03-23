@@ -30,8 +30,6 @@ void *zmalloc(size_t size) {
     if(!ptr) zmalloc_oom(size);
 
     *((size_t *) ptr) = size;
-    size_t a = *((size_t *)ptr);
-    printf("zmalloc size: %zu\n", a);
     increment_used_memory(size + PREFIX_SIZE);
     
     return (char *)ptr + PREFIX_SIZE;
