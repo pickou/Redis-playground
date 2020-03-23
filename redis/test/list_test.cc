@@ -35,6 +35,7 @@ TEST_F(ListTest, ListAddNodeHeadTail) {
     list = listAddNodeTail(list, &a);
     EXPECT_EQ(2, listLength(list));
     EXPECT_FALSE(listTail(list) == NULL);
+    EXPECT_EQ(a, *((int *)listNodeValue(listTail(list))));
 
     int *b = NULL;
     list = listAddNodeHead(list, b);
