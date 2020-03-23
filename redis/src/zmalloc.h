@@ -15,8 +15,8 @@ void safe_zfree(void **p) {
 } while(0)
 #endif
 
-char *zmalloc(size_t size);
-char *zremalloc(void *ptr, size_t size);
+void *zmalloc(size_t size);
+void *zremalloc(void *ptr, size_t size);
 void zfree(void *ptr);
 size_t get_used_memory();
 

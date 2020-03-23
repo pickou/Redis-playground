@@ -23,21 +23,22 @@ void zmalloc_oom(size_t size) {
     abort();
 }
 
-char *zmalloc(size_t size) {
+void *zmalloc(size_t size) {
     void *ptr = malloc(size + PREFIX_SIZE);
 
     // out of memory
     if(!ptr) zmalloc_oom(size);
 
     *((size_t *) ptr) = size;
-
+    size_t a = *((size_t *)ptr);
+    printf("zmalloc size: %zu\n", a);
     increment_used_memory(size + PREFIX_SIZE);
     
     return (char *)ptr + PREFIX_SIZE;
 }
 
 
-char *zremalloc(void *ptr, size_t size) {
+void *zremalloc(void *ptr, size_t size) {
     if(!ptr) return zmalloc(size);
 
     void *newptr;
