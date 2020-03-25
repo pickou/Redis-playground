@@ -19,5 +19,6 @@ void *zmalloc(size_t size);
 void *zremalloc(void *ptr, size_t size);
 void zfree(void *ptr);
 size_t get_used_memory();
+size_t zsizeof(void *ptr);
 
 #endif
