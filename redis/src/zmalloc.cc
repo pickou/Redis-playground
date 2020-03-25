@@ -66,3 +66,8 @@ void zfree(void *ptr) {
 size_t get_used_memory() {
     return used_memory;
 }
+
+size_t zsizeof(void *ptr) {
+    void *realptr = (char *)ptr - PREFIX_SIZE;
+    return *((size_t *)realptr);
+}
