@@ -31,6 +31,24 @@ void *intArrDup(void *ptr) {
     return arr;
 }
 
+int intMatch(void *ptr, void *key) {
+    int ptr_val = *((int *)ptr);
+    int key_val = *((int *)key);
+    return ptr_val == key_val ? 1: 0;
+}
+
+int intArrMatch(void *ptr, void *key) {
+    int *ptr_int = (int *)ptr;
+    int *key_int = (int *)key;
+    size_t size_ptr = zsizeof(ptr_int);
+    size_t size_key = zsizeof(key_int);
+    if(size_ptr != size_key) return 0;
+    for(size_t i=0; i<size_ptr; ++i) {
+        if(*(ptr_int + i) != *(key_int + i)) return 0;
+    }
+    return 1;
+}
+
 TEST_F(ListTest, ListCreate) {
     struct list *list = listCreate();
     ASSERT_TRUE(list != NULL);
@@ -202,5 +220,38 @@ TEST_F(ListTest, ListFree) {
 }
 
 TEST_F(ListTest, ListMatch) {
+    int a = 10;
+    int b = 1;
+    int c = 55;
+    list *list = listCreate();
+    list = listAddNodeHead(list, &a);
+    list = listAddNodeHead(list, &b);
+    list = listAddNodeHead(list, &c);
+    list->match = intMatch;
+    listNode* node = listSearchKey(list, &a);
+    ASSERT_EQ(node, listTail(list));
+    EXPECT_EQ(a, *((int *)listNodeValue(node)));
+    safe_listRelease(&list);
+}
 
+TEST_F(ListTest, ListArrMatch) {
+    list *list = listCreate();
+    list->match = intArrMatch;
+    list->free = zfree;
+    int *aa = (int *)zmalloc(sizeof(int)*4);
+    for(int i=0; i<4; ++i) *(aa + i) = i + 1;
+    int *bb = (int *)zmalloc(sizeof(int)*5);
+    for(int i=0; i<5; ++i) *(bb + i) = i + 1;
+    int *cc = (int *)zmalloc(sizeof(int)*6);
+    for(int i=0; i<6; ++i) *(cc + i) = i + 1;
+    list = listAddNodeHead(list, aa);
+    list = listAddNodeHead(list, bb);
+
+    listNode *node = listSearchKey(list, aa);
+    ASSERT_EQ(node, listTail(list));
+    
+    node = listSearchKey(list, cc);
+    ASSERT_TRUE(node == NULL);
+    safe_zfree(&cc);
+    safe_listRelease(&list);
 }
