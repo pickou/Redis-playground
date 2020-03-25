@@ -184,9 +184,6 @@ list *listDup(list *orig) {
         } else {
             value = node->value;
         }
-        if(value == NULL) {
-            printf("value is NULL.\n");
-        }
         if((copy = listAddNodeTail(copy, value)) == NULL) {
             listReleaseIter(iter);
             listRelease(copy);
