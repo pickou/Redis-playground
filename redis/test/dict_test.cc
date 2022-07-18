@@ -1,6 +1,7 @@
 #include <iostream>
 #include "thirdparty/gtest/gtest.h"
 #include "redis/src/dict.h"
+#include "redis/src/hash.h"
 
 
 class DictTest: public ::testing::Test {
@@ -24,11 +25,13 @@ TEST_F(DictTest, DictCreate) {
 
 TEST_F(DictTest, DictAdd) {
     dict *dict = dictCreate();
-/*    unsigned char key[] = "redis dict";
+    unsigned char key[] = "redis dict";
     uint64_t val = 164;
-    setSimpleHashFunc(dict);
+    dictType dtype;
+    dtype.hashFunction = simpleHash;
+    dict->type = &dtype;
     dict = dictAdd(dict, key, val);
-*/
+
     dictRelease(dict);
 }
 

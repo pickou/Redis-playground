@@ -28,6 +28,10 @@ typedef struct dictType {
     int (*keyCompare)(void *privdata, const void *key1, const void *key2); // key compare
     void (*keyDestructor)(void *privdata, void *key); // key destructor
     void (*valDestructor)(void *privdata, void *obj); // value destructor
+
+    dictType() : hashFunction(NULL),
+                 keyDup(NULL), valDup(NULL),
+                 keyDestructor(NULL), valDestructor(NULL) { }
 } dictType;
 
 typedef struct dict {
@@ -50,7 +54,6 @@ void dictRelease(dict *dt); // release dict
 dict *dictAdd(dict *dt, void *key, void *val); // add k/v
 dictEntry *dictFind(dict *dt, const void *key); // use k to get v
 dictEntry *dictGetRandomKey(dict *dt); // randomly get
-int dictDelet(dict *dt, const void *key); // use k to delete k/v
-void setSimpleHashFunc(dict *dt); // set a simple hash function
+int dictDelete(dict *dt, const void *key); // use k to delete k/v
 int dictExpand(dict *d, unsigned long size); // expand dict
 #endif

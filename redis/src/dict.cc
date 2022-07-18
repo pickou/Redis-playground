@@ -10,6 +10,19 @@
 #include "redis/src/zmalloc.h"
 
 /* ----------- private functions ------------*/
+
+static void _dictPanic(const char *fmt, ...);
+static int _dictExpandIfNeeded(dict *d);
+static void *_dictAlloc(size_t size);
+static void _dictFree(dict *dt);
+static void _dicthtReset(dictht *ht);
+static void _dictReset(dict *dt);
+static dictEntry *_dictEntryCreate();
+static unsigned long _dictNextPower(unsigned long size);
+static long _getHashKeyIndex(dict *dt, const void *key);
+static void _dictEntryRelease(dictEntry *entry);
+
+
 static void _dictPanic(const char *fmt, ...) {
     va_list ap;
 
@@ -50,13 +63,6 @@ static void _dictReset(dict *dt) {
     _dicthtReset(&(dt->ht[1]));
 }
 
-int _dictInit(dict *dt, dictType *type, void *privdata) {
-    _dictReset(dt);
-    dt->type = type;
-    dt->privdata = privdata;
-    return DICT_OK;
-}
-
 static dictEntry *_dictEntryCreate() {
     dictEntry *entry = (dictEntry *)zmalloc(sizeof(struct dictEntry));
     entry->key = NULL;
@@ -95,6 +101,62 @@ static unsigned long _dictNextPower(unsigned long size) {
         i *= 2;
     }
 }
+
+int _dictHtInit(dictht *dht) {
+    // init table to void random pointer
+    for (size_t i = 0; i < dht->size; ++i) {
+        dht->table[i] = NULL;
+    }
+    return DICT_OK;
+}
+
+int _dictHtInit(dict *dt) {
+    int isOk = _dictExpandIfNeeded(dt);
+    if (!isOk) return isOk;
+    isOk &= _dictHtInit(&dt->ht[0]);
+    isOk &= _dictHtInit(&dt->ht[1]);
+    return isOk;
+}
+
+int _dictInit(dict *dt, dictType *type, void *privdata) {
+    _dictReset(dt);
+    dt->type = type;
+    dt->privdata = privdata;
+    _dictHtInit(dt);
+    return DICT_OK;
+}
+
+void _dictEntryRelease(dictht *dht) {
+    for (size_t i = 0; i < dht->size; ++i) {
+        dictEntry* p = dht->table[i];
+        while (p != NULL) {
+            dictEntry* tmp = p;
+            p = p->next;
+            _dictEntryRelease(tmp);
+        }
+    }
+}
+
+void _dictHtRelease(dictht *dht) {
+    _dictEntryRelease(dht);
+    zfree(dht->table);
+}
+
+void _dictHtRelease(dict *dt) {
+    if (&dt->ht[0] != NULL) {
+        _dictHtRelease(&dt->ht[0]);
+    }
+    if (&dt->ht[1] != NULL) {
+        _dictHtRelease(&dt->ht[1]);
+    }
+}
+
+void _privDataRelease(dict *dt) {
+    if (dt->privdata != NULL) {
+        zfree(dt->privdata);
+    }
+}
+
 /* ------------ API functions -----------*/
 dict *dictCreate(dictType *type, void *privdata) {
     dict *dt = _dictAlloc(sizeof(struct dict));
@@ -109,8 +171,8 @@ dict *dictCreate() {
 }
 
 void dictRelease(dict *dt) {
-    // TODO: release privdata
-    // TODO release ht
+    _privDataRelease(dt);
+    _dictHtRelease(dt);
     _dictReset(dt);
     _dictFree(dt);
 }
@@ -129,17 +191,12 @@ dict *dictAdd(dict *dt, void *key, void *val) {
     dictEntry **table = ht.table;
     dictEntry *entry = dictEntryCreate(key, val);
     long index = _getHashKeyIndex(dt, key);
-    index = index & ht->sizemask; // % operation
+    index = index & ht.sizemask; // % operation
     // put the entry in the front
     entry->next = table[index];
     table[index] = entry;
     ht.used++;
     return dt;
-}
-
-// TODO: set a simple hash function
-void setSimpleHashFunc(dict *dt) {
-    dt->type->hashFunction = simpleHash;
 }
 
 // TODO: considering rehash
@@ -149,7 +206,7 @@ int dictExpand(dict *d, unsigned long size) {
     if(realsize == d->ht[0].size) return DICT_ERR;
 
     n.size = realsize;
-    m.sizemask = realsize - 1;
+    n.sizemask = realsize - 1;
     n.table = zmalloc(realsize * sizeof(dictEntry*));
     n.used = 0;
 
@@ -161,5 +218,4 @@ int dictExpand(dict *d, unsigned long size) {
     d->ht[1] = n;
     d->rehashidx = 0;
     return DICT_OK;
-
 }
