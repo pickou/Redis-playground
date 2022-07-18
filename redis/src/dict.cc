@@ -219,3 +219,22 @@ int dictExpand(dict *d, unsigned long size) {
     d->rehashidx = 0;
     return DICT_OK;
 }
+
+dictEntry* getDictEntry(dict* dt, const void* key) {
+    long idx = _getHashKeyIndex(dt, key);
+    idx = idx & dt->ht[0].sizemask;
+    dictEntry** table = dt->ht[0].table;
+    if (table[idx] != NULL) {
+        return table[idx];
+    }
+    idx = idx & dt->ht[1].sizemask;
+    table = dt->ht[1].table;
+    if (table[idx] != NULL) {
+        return table[idx];
+    }
+    return NULL;
+}
+
+void* dictFind(dict *dt, const void* key) {
+    return getDictEntry(dt, key)->value;
+}

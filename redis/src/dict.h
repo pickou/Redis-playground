@@ -52,7 +52,7 @@ dict *dictCreate(dictType *type, void *privdata); // create an empty dict
 dict *dictCreate(); // create empty dict
 void dictRelease(dict *dt); // release dict
 dict *dictAdd(dict *dt, void *key, void *val); // add k/v
-dictEntry *dictFind(dict *dt, const void *key); // use k to get v
+void *dictFind(dict *dt, const void *key); // use k to get v
 dictEntry *dictGetRandomKey(dict *dt); // randomly get
 int dictDelete(dict *dt, const void *key); // use k to delete k/v
 int dictExpand(dict *d, unsigned long size); // expand dict
